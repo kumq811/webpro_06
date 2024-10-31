@@ -27,21 +27,47 @@ app.get("/luck", (req, res) => {
   res.render( 'luck', {number:num, luck:luck} );
 });
 
+
+const path = require('path');
+// 静的ファイルを提供する（janken.htmlを含む）
+app.use(express.static(path.join(__dirname, 'public')));
+// 最初のルートでjanken.htmlを返す
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'janken.html'));
+});
 app.get("/janken", (req, res) => {
   let hand = req.query.hand;
-  let win = Number( req.query.win );
-  let total = Number( req.query.total );
-  console.log( {hand, win, total});
+  let win = Number( req.query.win )||0;
+  let total = Number( req.query.total )||0;
+  console.log( {hand, win, total});  
   const num = Math.floor( Math.random() * 3 + 1 );
   let cpu = '';
   if( num==1 ) cpu = 'グー';
   else if( num==2 ) cpu = 'チョキ';
   else cpu = 'パー';
+
+  if( num==1 ) hand = 'グー';
+  else if( num==2 ) hand = 'チョキ';
+  else cpu = 'パー';
   // ここに勝敗の判定を入れる
-  // 今はダミーで人間の勝ちにしておく
-  let judgement = '勝ち';
+  let judgement = '';
+  if(hand==cpu){
+  judgement='引き分け';
+  }else if(
+  (hand=='グー'&&cpu=='チョキ')||
+  (hand=='チョキ'&&cpu=='パー')||
+  (hand=='パー'&&cpu=='グー')
+  ) {
+  judgement='勝ち';
   win += 1;
+  } else {
+  judgement='負け';
+  }
   total += 1;
+  // 今はダミーで人間の勝ちにしておく
+  //let judgement = '勝ち';
+  //win += 1;
+  //total += 1;
   const display = {
     your: hand,
     cpu: cpu,
