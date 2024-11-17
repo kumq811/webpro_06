@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>High & Low ゲーム</title>
+</head>
+<body>
+    <h1>High & Low ゲーム</h1>
+    <p>1~13の数字からあなたの数字はCPUより High？ Low?</p>
+    <p><%= total %> 試合目のCPUの数値は <%= cpuNum %> です．</p>
+    <p>現在 <%= total %> 試合中 <%= win %> 勝しています．</p>
+    <hr>
+    <form action="/highlow">
+        <label><p><%= total2 %>試合目のあなたの数値は <%= yourNum %> でした．</p></label>
+        <label><p>選択：<%= choice %></p>
+            <p>判定：<%= judgement %></p></label>
+        <label>High または Low を選んでください：</label><br>
+        <input type="radio" name="choice" value="High" required> High
+        <input type="radio" name="choice" value="Low"> Low
+        <br><br>
+        <input type="submit" value="勝負！">
+        <input type="hidden" name="win" value="<%= win %>">
+        <input type="hidden" name="total" value="<%= total %>">
+        <input type="hidden"name="total2" value="<%= total2 %>">
+    </form>
+</body>
+</html>

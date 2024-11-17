@@ -46,9 +46,6 @@ app.get("/janken", (req, res) => {
   else if( num==2 ) cpu = 'チョキ';
   else cpu = 'パー';
 
-  if( num==1 ) hand = 'グー';
-  else if( num==2 ) hand = 'チョキ';
-  else cpu = 'パー';
   // ここに勝敗の判定を入れる
   let judgement = '';
   if(hand==cpu){
@@ -64,10 +61,7 @@ app.get("/janken", (req, res) => {
   judgement='負け';
   }
   total += 1;
-  // 今はダミーで人間の勝ちにしておく
-  //let judgement = '勝ち';
-  //win += 1;
-  //total += 1;
+
   const display = {
     your: hand,
     cpu: cpu,
@@ -77,5 +71,73 @@ app.get("/janken", (req, res) => {
   }
   res.render( 'janken', display );
 });
+
+//
+//
+
+
+let targetNumber = Math.floor(Math.random() * 100 + 1); // 1から100までのランダム数字
+let guesscount = 0;
+let history = [];
+// 数当てゲームのルート
+app.get('/guess', (req, res) => {
+  const guess = Number(req.query.guess); 
+  guesscount += 1; 
+  history.push(guess);
+  console.log( {guesscount, history}); 
+  let message = '';
+  if (guess < targetNumber) {
+    message = 'もっと大きいです';
+  } else if (guess > targetNumber) {
+    message = 'もっと小さいです';
+  } else {
+    message = `正解です！${guesscount}回目で当たりました！`;
+    // ゲームをリセット
+    targetNumber = Math.floor(Math.random() * 100 + 1);
+    guesscount = 0;
+    history = [];
+  }
+  res.render('number_guess', { guess, message, guesscount, history });
+});
+
+//
+//
+
+
+app.get("/highlow", (req, res) => {
+  let choice = req.query.choice;  
+  let win = Number(req.query.win) || 0;
+  let total = Number(req.query.total) || 0;
+  let total2 = total > 0 ? total - 1 : 0;
+  console.log({ choice, win, total ,total2});
+  // ランダムな数値（1～13）を生成
+  const cpuNum = Math.floor(Math.random() * 13) + 1;
+  const playerNum = Math.floor(Math.random() * 13) + 1;
+  // 判定ロジック
+  let judgement = '';
+  if ((choice === 'High' && playerNum > cpuNum) || 
+      (choice === 'Low' && playerNum < cpuNum)) {
+    judgement = '勝ち';
+    win += 1;
+  } else if (playerNum === cpuNum) {
+    judgement = '引き分け';
+  } else {
+    judgement = '負け';
+  }
+  total += 1;
+  total2 += 1;
+  // 表示データ
+  const display = {
+    yourNum: playerNum,
+    cpuNum: cpuNum,
+    choice: choice,
+    judgement: judgement,
+    win: win,
+    total: total,
+    total2 : total2
+  };
+  res.render('highlow', display);
+});
+
 
 app.listen(8080, () => console.log("Example app listening on port 8080!"));
