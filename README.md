@@ -37,7 +37,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'janken.html'));
 });
 ```
-
 3. じゃんけんゲーム
 - /jankenルートで、ユーザーの手、勝数、合計試合数をリクエストパラメータとして受け取る．
 - Math.random()を使ってコンピュータの手をランダムに選び，ユーザーと比較して勝敗を判定する．
@@ -115,6 +114,18 @@ let history = [];
 
 - 推測が正解の場合，ターゲットナンバーを再生成し，ゲームをリセットする．
 
+```javascript
+if (guess < targetNumber) {
+    message = 'もっと大きいです';
+} else if (guess > targetNumber) {
+    message = 'もっと小さいです';
+} else {
+    message = `正解です！${guesscount}回目で当たりました！`;
+    targetNumber = Math.floor(Math.random() * 100 + 1);
+    guesscount = 0;
+    history = [];
+}
+```
 
 4. 結果の表示
 - number_guess.ejsテンプレートを使用して，ユーザーに現在の推測，メッセージ，推測回数，履歴を表示する．
@@ -174,6 +185,19 @@ const playerNum = Math.floor(Math.random() * 13) + 1;
 2. 判定
 - プレイヤーが選んだHighまたはLowに基づき，プレイヤーの数字とCPUの数字を比較して勝敗を決定する．
 - 数字が等しい場合は「引き分け」とする．
+
+```javascript
+if ((choice === 'High' && playerNum > cpuNum) || 
+    (choice === 'Low' && playerNum < cpuNum)) {
+    judgement = '勝ち';
+    win += 1;
+} else if (playerNum === cpuNum) {
+    judgement = '引き分け';
+} else {
+    judgement = '負け';
+}
+```
+
 3. 試合数と勝利数のカウント
 - total：現在までの試合数
 - win：勝利数
