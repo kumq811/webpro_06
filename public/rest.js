@@ -87,7 +87,7 @@ document.querySelector('#put').addEventListener('click', () => {
 });
 
 document.querySelector('#delete').addEventListener('click', () => {
-    const params = {  // URL Encode
+    const params = {  // URL Encode!
         method: "DELETE",
         body:  '',
         headers: {

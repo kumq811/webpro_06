@@ -89,7 +89,7 @@ app.post("/check", (req, res) => {
 });
 
 app.post("/read", (req, res) => {
-  // 本来はここでDBMSに問い合わせる
+  // 本来はここでDBMSに問い合わせる!
   const start = Number( req.body.start );
   console.log( "read -> " + start );
   if( start==0 ) res.json( {messages: bbs });
