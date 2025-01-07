@@ -7,14 +7,12 @@ const NoteApp = (() => {
     const colorInput = document.getElementById('note-color');
     const noteList = document.getElementById('note-list');
 
-    // 内部状態を保持
     const state = {
         notes: []
     };
 
-    // メモのレンダリング
     const renderNotes = () => {
-        noteList.innerHTML = ''; // リストをクリア
+        noteList.innerHTML = '';
         state.notes.forEach((note, index) => {
             const listItem = document.createElement('li');
             listItem.style.backgroundColor = note.color;
@@ -33,28 +31,41 @@ const NoteApp = (() => {
         });
     };
 
-    // メモの保存
     const saveNote = (title, content, color) => {
-        state.notes.push({ title, content, color });
+        const newNote = { title, content, color };
+        state.notes.push(newNote);
         renderNotes();
+        
+        
+        fetch('/save-note', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newNote)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Note saved:', data);
+        })
+        .catch(error => {
+            console.error('Error saving note:', error);
+        });
     };
 
-    // メモの削除
     const deleteNote = (index) => {
         state.notes.splice(index, 1);
         renderNotes();
     };
 
-    // メモの編集
     const editNote = (index) => {
         const note = state.notes[index];
         titleInput.value = note.title;
         contentInput.value = note.content;
         colorInput.value = note.color;
-        deleteNote(index); // 編集中のメモを一旦削除
+        deleteNote(index);
     };
 
-    // フォーム送信イベントの処理
     const handleFormSubmit = (event) => {
         event.preventDefault();
         const title = titleInput.value.trim();
@@ -65,11 +76,10 @@ const NoteApp = (() => {
             saveNote(title, content, color);
             titleInput.value = '';
             contentInput.value = '';
-            colorInput.value = '#ffffff'; // 初期色にリセット
+            colorInput.value = '#ffffff';
         }
     };
 
-    // リストクリックイベントの処理
     const handleListClick = (event) => {
         const target = event.target;
         const index = target.dataset.index;
@@ -81,11 +91,9 @@ const NoteApp = (() => {
         }
     };
 
-    // イベントリスナーの設定
     form.addEventListener('submit', handleFormSubmit);
     noteList.addEventListener('click', handleListClick);
 
-    // 初期化処理
     const init = () => {
         renderNotes(); 
     };
@@ -93,5 +101,4 @@ const NoteApp = (() => {
     return { init };
 })();
 
-// アプリケーションの初期化
 NoteApp.init();
